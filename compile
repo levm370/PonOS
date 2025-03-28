@@ -1,17 +1,44 @@
-#!/bin/python3
-IMPORT_MACROS = ['extern']
-def compile(code):
-    code = code.replace('    ', '')
-    code = code.replace('extern', 'import')
-    code = code.split('\n')
-    print(code)
-code = '''
-extern os
-.main
-    int 0x86
-    int 0x85
-    mov print 0x85
-    mov 'hello', 0x85
-    call 0x85
-'''
-compile(code)
+#!/usr/bin/python3
+import argparse
+from pathlib import Path
+
+class VirtualMachine:
+    def __init__(self):
+        self.registers = {'A': 0, 'B': 0, 'C': 0}  # Добавлен регистр 'C'
+        self.memory = {}
+        self.program_counter = 0
+        self.instructions = []
+
+    def load_program_from_file(self, filename):
+        with open(filename, 'r') as file:
+            self.instructions = [line.split() for line in file.read().splitlines()]
+
+    def run(self):
+        while self.program_counter < len(self.instructions):
+            instruction = self.instructions[self.program_counter]
+            opcode = instruction[0]
+
+            if opcode == 'MOV':
+                reg, val = instruction[1], instruction[2]  # Без запятых
+                self.registers[reg] = int(val)
+            elif opcode == 'PRINT':
+                reg = instruction[1]  # Без запятых
+                print(self.registers.get(reg, 0))
+            elif opcode == 'HALT':
+                break
+            else:
+                raise ValueError(f"Invalid instruction: {opcode}")
+
+            self.program_counter += 1
+
+def main():
+    parser = argparse.ArgumentParser(description="Virtual Machine for Simple Assembly Code")
+    parser.add_argument('filename', type=Path, help="File containing assembly instructions")
+    args = parser.parse_args()
+
+    vm = VirtualMachine()
+    vm.load_program_from_file(args.filename)
+    vm.run()
+
+if __name__ == "__main__":
+    main()
