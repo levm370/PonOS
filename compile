@@ -1,0 +1,17 @@
+#!/bin/python3
+IMPORT_MACROS = ['extern']
+def compile(code):
+    code = code.replace('    ', '')
+    code = code.replace('extern', 'import')
+    code = code.split('\n')
+    print(code)
+code = '''
+extern os
+.main
+    int 0x86
+    int 0x85
+    mov print 0x85
+    mov 'hello', 0x85
+    call 0x85
+'''
+compile(code)

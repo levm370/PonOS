@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import sys, time, os, struct, json
 import datetime
+from system import ponosctrl
 #try:
 #    import ponosgraphics as pg
 #except:
@@ -11,7 +12,6 @@ user = 'ponos'
 host = sys.argv[1]
 memory = sys.argv[2]
 processor = sys.argv[3]
-date = datetime.datetime.now()
 
 class VirtualDisk:
     def __init__(self, disk_file="ponos.img"):
@@ -124,17 +124,16 @@ class Filesystem:
     
     def read(self, file):
         try:
-            print(self.disk.read_file(file))
+            return self.disk.read_file(file)
         except Exception as e:
             print(f"error: {e}")
 
 def ponosfetch():
-    global user, host, date, processor, memory
-    print('\033[0;33mPonOS        ', '  Memory:', memory, '\033[0m')
-    print('\033[0;33m     _A_  *  ', '  User:', user, '\033[0m')
-    print('\033[0;33m * _(___)_   ', '  Host:', host, '\033[0m')
-    print('\033[0;33m _(_______)_ '  '   Processor:', processor, '\033[0m')
-    print('\033[0;33m(___________)', '  Datetime:', date, '\033[0m')
+    global memory
+    global user
+    global host
+    global processor
+    os.system(f'python3 ./system/ponosfetch {memory} {user} {host} "{processor}"')
 
 def ls():
     disk = VirtualDisk()
@@ -171,6 +170,11 @@ while True:
     elif term.startswith('rm'):
         file = term[3:]
         fs.delete(file)
+    elif term.startswith('export'):
+        data = term[7:]
+        fd = fs.read(data)
+        with open(data, 'w') as fw:
+            fw.write(fd)
     elif term.startswith('rnf'):
         old = term[4:]
         new = input('new file name: ')
@@ -182,7 +186,7 @@ while True:
     elif term.startswith('cat'):
         data = term[4:]
         fs.read(data)
-    elif term.startswith('ls'):
+    elif term.startswith('ls -vfs'):
         ls()
     elif term.startswith('ip'):
         ip()
@@ -196,6 +200,8 @@ while True:
         exit()
     elif term == 'clear':
         print('\x1b[H\x1b[2J\x1b[3J')
+    elif term == 'ponosgraphics':
+        ponosctrl.circle()
     #elif term == 'ponosgraphics init':
     #    root = pg.ponoswin()
     #elif term == 'ponosgraphics loop':
@@ -209,5 +215,9 @@ while True:
             exec(script)
         except Exception as e:
             print('error:', e)
+    elif term == 'ls':
+        print('system files:')
+        for item in os.listdir('./system'):
+            print(item)
     else:
         print(f"command '{term}' not found.")
