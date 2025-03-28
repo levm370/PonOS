@@ -1,0 +1,14 @@
+import sys, datetime
+memory = sys.argv[1]
+user = sys.argv[2]
+host = sys.argv[3]
+processor = sys.argv[4]
+date = datetime.datetime.now()
+def ponosfetch():
+    global user, host, date, processor, memory
+    print('\033[0;33mPonOS        ', '  Memory:', memory, '\033[0m')
+    print('\033[0;33m     _A_  *  ', '  User:', user, '\033[0m')
+    print('\033[0;33m * _(___)_   ', '  Host:', host, '\033[0m')
+    print('\033[0;33m _(_______)_ '  '   Processor:', processor, '\033[0m')
+    print('\033[0;33m(___________)', '  Datetime:', date, '\033[0m')
+ponosfetch()
