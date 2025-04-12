@@ -2,10 +2,7 @@
 import sys, time, os, struct, json
 import datetime
 from system import ponosctrl
-#try:
-#    import ponosgraphics as pg
-#except:
-#    print('failed to import graphics module.')
+import system.ponosgraphics as pg
 # Параметры системы
 ip_addr = sys.argv[4]
 user = 'ponos'
@@ -149,8 +146,31 @@ def ip():
 # Инициализация
 fs = Filesystem()
 print('PonOS 4.54 (ponosfs bulka edition)')
-
+print("'help' to command support")
 # Главный цикл (без изменений)
+help_support = """
+help - prints this support
+
+ls                   - list files on ./system/ directory
+ls -vfs              - list files on virtual FS
+rm <filename>        - removes VFS file
+rnf <filename>       - renames VFS file
+export <filename>    - export file from VFS
+touch <filename>     - creates VFS file
+write <filename>     - opens a PFileEditor
+wfile <filename>     - opens a WFile editor
+cat                  - prints a file content
+
+ponosfetch           - print system info
+ponosgraphics        - opens a PonosGraphics Window (see \033[1mdocumentation\033[0m)
+ip                   - prints a IP address
+exit                 - shutdown a PC
+echo                 - you know :)
+
+pwexec <script>      - executes an Python script on ./system/ dir
+hwexec <binfile>     - executes an executable file (./binfile) on ./system/ dir
+python3 <function>   - executes a Python function e.g. print()
+"""
 while True:
     term = input('ponos bulka -> ')
     if term.startswith('touch'):
@@ -215,9 +235,17 @@ while True:
             exec(script)
         except Exception as e:
             print('error:', e)
+    elif term.startswith("pwexec"):
+        data = term[7:]
+        os.system(f"python3 system/{data}")
+    elif term.startswith("hwexec"):
+        data = term[7:]
+        os.system(f"./system/{data}")
     elif term == 'ls':
         print('system files:')
         for item in os.listdir('./system'):
             print(item)
+    elif term == "help":
+        print(help_support)
     else:
         print(f"command '{term}' not found.")
