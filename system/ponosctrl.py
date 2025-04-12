@@ -13,7 +13,7 @@ def startall(r, u):
 
 center_x, center_y = 200, 200  # центр круга
 radius = 100  # радиус круга
-num_squares = 305  # количество квадратов (чем больше, тем более гладкий круг)
+num_squares = 10  # количество квадратов (чем больше, тем более гладкий круг)
 
 objects = []
 def circle():
@@ -28,4 +28,4 @@ def circle():
         objects.append(square(x, y, 10, 10))
 
         rnd, upd = ponos(objects)
-#startall(rnd, upd)
+        startall(rnd, upd)
